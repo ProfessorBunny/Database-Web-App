@@ -3,8 +3,27 @@ from flask import Flask, render_template, request
 # normally psycopg2 is used to access pstgres sql db
 # but more commonly used library when operating with postgres sql db in flask is SQLAlchemy
 # SQLAlchemy is more higher level than psycopg2
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123456@localhost/number_collector'
+db = SQLAlchemy(app)
+
+
+class Data(db.Model):
+    __tablename__ = "data"
+    id = db.Column(db.Integer, primary_key=True)
+
+    email_ = db.Column(db.String(120), unique=True)
+    # we don't want same id again in db
+    # that's why unique is true
+    number_ = db.Column(db.Integer)
+
+    def __init__(self, email_, number_):
+        self.email_ = email_
+        self.number_ = number_
 
 
 @app.route("/")
@@ -17,6 +36,10 @@ def success():
     if request.method == 'POST':
         email = request.form["email_name"]
         number = request.form["number_name"]
+
+        data = Data(email, number)
+        db.session.add(data)
+        db.session.commit()
         return render_template("success.html")
 
 
