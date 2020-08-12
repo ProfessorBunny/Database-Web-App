@@ -4,6 +4,28 @@ from flask import Flask, render_template, request
 # but more commonly used library when operating with postgres sql db in flask is SQLAlchemy
 # SQLAlchemy is more higher level than psycopg2
 from flask_sqlalchemy import SQLAlchemy
+from email.mime.text import MIMEText
+import smtplib
+
+
+def sendemail(email, number):
+    from_email = "nikunjmailer@gmail.com"
+    from_password = "qwerty@123456"
+    to_email = email
+
+    subject = "The updated Number"
+    message = "Hey there, your number is <strong>%s</strong>." % number
+
+    msg = MIMEText(message, 'html')
+    msg['Subject'] = subject
+    msg['To'] = to_email
+    msg['From'] = from_email
+
+    gmail = smtplib.SMTP('smtp.gmail.com', 587)
+    gmail.ehlo()
+    gmail.starttls()
+    gmail.login(from_email, from_password)
+    gmail.send_message(msg)
 
 
 app = Flask(__name__)
@@ -36,6 +58,7 @@ def success():
     if request.method == 'POST':
         email = request.form["email_name"]
         number = request.form["number_name"]
+        sendemail(email, number)
         if db.session.query(Data).filter(Data.email_ == email).count() == 0:
             data = Data(email, number)
             db.session.add(data)
