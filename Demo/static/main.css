@@ -41,6 +41,11 @@ body {
 	font-size: 50px;
 	margin-top: 50px;
 }
+#message {
+	font-size: 15px !important;
+	color: rgb(255, 64, 64) !important;
+	font-family: 'Lemonada', cursive !important;
+}
 .container-success p {
 	font-family: 'Chilanka', cursive;
 	font-size: 30px;

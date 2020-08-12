@@ -36,11 +36,12 @@ def success():
     if request.method == 'POST':
         email = request.form["email_name"]
         number = request.form["number_name"]
-
-        data = Data(email, number)
-        db.session.add(data)
-        db.session.commit()
-        return render_template("success.html")
+        if db.session.query(Data).filter(Data.email_ == email).count() == 0:
+            data = Data(email, number)
+            db.session.add(data)
+            db.session.commit()
+            return render_template("success.html")
+    return render_template('index.html', text="Seems like we got something from that email once!")
 
 
 if __name__ == "__main__":

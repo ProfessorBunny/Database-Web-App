@@ -4,17 +4,21 @@
 
 <head>
     <link href="../static/main.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chilanka&family=Lemonada:wght@300&family=Recursive&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
-        <h1>Maintaining the balance</h1>
+        <h1>Maintaining The Balance</h1>
         <h3>Pick a number from 1 to 100, in order to maintain the average value equal to 50.</h3>
         <h3>The average is calculated using your picked value along with all the previously entred values by various
             users</h3>
         <h3>But the catch is you don't know what is the current average value </h3>
         <h3>Let's see how well you know your fellow humans</h3>
-        <form action="success.html" method="POST">
+        <div id="message"> {{text | safe}} </div>
+        <form action="{{url_for('success')}}" method="POST">
             <input title="Your email will be safe with us" placeholder="Enter your email address" type="email"
                 name="email_name" required> <br>
             <input title="Guess a number" placeholder="Enter the number from 1 to 100" type="number" min="1" , max="100"
