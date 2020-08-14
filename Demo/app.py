@@ -6,15 +6,17 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from email.mime.text import MIMEText
 import smtplib
+from sqlalchemy.sql import func
 
 
-def sendemail(email, number):
+def send_email(email, number, average_number, count):
     from_email = "nikunjmailer@gmail.com"
     from_password = "qwerty@123456"
     to_email = email
 
     subject = "The updated Number"
-    message = "Hey there, your number is <strong>%s</strong>." % number
+    message = "Hey there, your number is <strong>%s</strong>. <br> Average number by far is <strong>%s</strong> and that is calculated from the input of <strong>%s</strong> people. <br> Thanks!" % (
+        number, average_number, count)
 
     msg = MIMEText(message, 'html')
     msg['Subject'] = subject
@@ -58,13 +60,17 @@ def success():
     if request.method == 'POST':
         email = request.form["email_name"]
         number = request.form["number_name"]
-        sendemail(email, number)
+
         if db.session.query(Data).filter(Data.email_ == email).count() == 0:
             data = Data(email, number)
             db.session.add(data)
             db.session.commit()
+            average_number = db.session.query(func.avg(Data.number_)).scalar()
+            average_number = round(average_number, 1)
+            count = db.session.query(Data.number_).count()
+            send_email(email, number, average_number, count)
             return render_template("success.html")
-    return render_template('index.html', text="Seems like we got something from that email once!")
+    return render_template('index.html', text="Seems like we already got something from this email once!")
 
 
 if __name__ == "__main__":
